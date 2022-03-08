@@ -17,15 +17,15 @@ for url in OLX_URLS:
 
 
 REDIS_PASSWORD = os.environ.get("REDIS_PASSWORD")
-print(REDIS_PASSWORD)
 REDIS_URL = f'redis://:{REDIS_PASSWORD}@redis:6379'
+PERIOD = 60. * 5
 
-app = Celery('hello', backend=REDIS_URL, broker=REDIS_URL)
+app = Celery('Periodic parser', backend=REDIS_URL, broker=REDIS_URL)
 
 
 @app.on_after_configure.connect
 def setup_periodic_tasks(sender, **kwargs):
-    sender.add_periodic_task(60., update.s(), name='Update')
+    sender.add_periodic_task(PERIOD, update.s(), name='Update')
 
 
 @app.task
