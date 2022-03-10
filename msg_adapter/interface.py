@@ -1,7 +1,9 @@
+import os
 from abc import ABC, abstractclassmethod
 from bot import bot
 from telebot.apihelper import ApiTelegramException
-from database.models import get_users
+
+CHAT_ID = os.environ.get("CHAT_ID")
 
 
 class MessagesAdapter(ABC):
@@ -9,13 +11,11 @@ class MessagesAdapter(ABC):
         self.found = []
 
     def send_found(self):
-        users = get_users()
-        for user in users:
-            for found_msg in self.found:
-                try:
-                    bot.send_message(user.chat_id, found_msg)
-                except ApiTelegramException:
-                    pass
+        for found_msg in self.found:
+            try:
+                bot.send_message(CHAT_ID, found_msg)
+            except ApiTelegramException:
+                pass
 
         self.found = []
 
