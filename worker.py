@@ -24,7 +24,7 @@ for url in OLX_URLS:
 
 REDIS_PASSWORD = os.environ.get("REDIS_PASSWORD")
 REDIS_URL = f'redis://:{REDIS_PASSWORD}@{REDIS_HOST}:{REDIS_PORT}'
-PERIOD = 60. * 1
+PERIOD = 60. * 5
 
 app = Celery('Periodic parser', backend=REDIS_URL, broker=REDIS_URL)
 
