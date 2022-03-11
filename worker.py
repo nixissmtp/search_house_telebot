@@ -12,6 +12,8 @@ load_dotenv()
 
 REDIS_HOST = "redis"
 REDIS_PORT = "6379"
+MINUTES = os.environ.get("MINUTES_PERIOD") or 1
+PERIOD = 60. * MINUTES
 
 OLX_URLS = (
     "ter/",
@@ -25,7 +27,6 @@ for url in OLX_URLS:
 
 REDIS_PASSWORD = os.environ.get("REDIS_PASSWORD")
 REDIS_URL = f'redis://:{REDIS_PASSWORD}@{REDIS_HOST}:{REDIS_PORT}'
-PERIOD = 60. * 1
 
 app = Celery('Periodic parser', backend=REDIS_URL, broker=REDIS_URL)
 
