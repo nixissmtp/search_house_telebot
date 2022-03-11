@@ -13,7 +13,7 @@ load_dotenv()
 REDIS_HOST = "redis"
 REDIS_PORT = "6379"
 MINUTES = os.environ.get("MINUTES_PERIOD") or 1
-PERIOD = 60. * MINUTES
+PERIOD = 60. * int(MINUTES)
 
 OLX_URLS = (
     "ter/",
