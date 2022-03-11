@@ -3,6 +3,9 @@ from database.models import search_offer, create_offer
 
 
 class OlxCrawler(Crawler):
+
+    base_url = "https://www.olx.ua/uk/nedvizhimost/kvartiry/dolgosrochnaya-arenda-kvartir"
+
     def parse(self, soup):
         offers = soup.find_all("div", {"class": "offer-wrapper"})
         for offer in offers:

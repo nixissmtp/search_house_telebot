@@ -7,7 +7,7 @@ from urllib.request import urlopen
 class Crawler(MessagesAdapter):
     def __init__(self, url):
         super().__init__()
-        self.url = url
+        self.url = f"{self.base_url}/{url}"
 
     def run(self):
         with urlopen(self.url) as doc_bytes:
