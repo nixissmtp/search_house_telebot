@@ -7,5 +7,6 @@ services:
     image: 'bitnami/redis:latest'
     environment:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - MINUTES_PERIOD=5
     ports:
       - 127.0.0.1:6002:6379
