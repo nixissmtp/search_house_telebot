@@ -3,7 +3,8 @@ from dotenv import load_dotenv
 import os
 from bot import bot
 from threading import Thread
-from http_crawler import OlxCrawler
+from offers_provider import offers_provider
+from database.models import TelegramMessage
 
 load_dotenv()
 
@@ -14,15 +15,7 @@ REDIS_HOST = "redis"
 REDIS_PORT = "6379"
 MINUTES = os.environ.get("MINUTES_PERIOD") or 1
 PERIOD = 60. * int(MINUTES)
-
-OLX_URLS = (
-    "ter/",
-    "ivano-frankovsk/",
-)
-
-providers = []
-for url in OLX_URLS:
-    providers.append(OlxCrawler(url))
+TELEGRAM_MSG_LIMITS = 10
 
 
 REDIS_PASSWORD = os.environ.get("REDIS_PASSWORD")
@@ -34,12 +27,19 @@ app = Celery('Periodic parser', backend=REDIS_URL, broker=REDIS_URL)
 @app.on_after_configure.connect
 def setup_periodic_tasks(sender, **kwargs):
     sender.add_periodic_task(PERIOD, update.s(), name='Update')
+    sender.add_periodic_task(30., send_messages.s(), name="Send messages to telegram")
 
 
 @app.task
 def update():
-    for provider in providers:
-        provider.run()
+    offers_provider.run()
+
+
+@app.task
+def send_messages():
+    for message in TelegramMessage.get_all(limit=TELEGRAM_MSG_LIMITS):
+        if bot.send_message(message.message):
+            TelegramMessage.remove(id=message.id)
 
 
 Thread(target=bot.infinity_polling).start()

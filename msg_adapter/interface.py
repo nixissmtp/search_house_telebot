@@ -1,21 +1,15 @@
-import os
 from abc import ABC, abstractclassmethod
-from bot import bot
-from telebot.apihelper import ApiTelegramException
-
-CHAT_ID = os.environ.get("CHAT_ID")
+from database.models import TelegramMessage
 
 
 class MessagesAdapter(ABC):
     def __init__(self):
         self.found = []
 
-    def send_found(self):
-        for found_msg in self.found:
-            try:
-                bot.send_message(CHAT_ID, found_msg)
-            except ApiTelegramException:
-                pass
+    def create_messages(self):
+        for i, found_msg in enumerate(self.found):
+            msg = f"{i} {self.city}: {found_msg}\n{'-' * 20}\n"
+            TelegramMessage.create(message=msg)
 
         self.found = []
 
